@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "jwt.private.key",
+      "type": "java.security.interfaces.RSAPrivateKey",
+      "description": "Private key for JWT."
+    },
+    {
+      "name": "jwt.public.key",
+      "type": "java.security.interfaces.RSAPublicKey",
+      "description": "Public key for JWT."
+    }
+  ] }

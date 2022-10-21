@@ -43,11 +43,14 @@ public class RestConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // @formatter:off
         http
-                .authorizeHttpRequests((authorize) -> authorize
-                        .anyRequest().authenticated()
-                )
+                .authorizeRequests()
+                    .antMatchers("/**").permitAll() // TODO: update to authenticated
+                    .antMatchers("/token").permitAll()
+                    .antMatchers("/swagger-ui**").permitAll()
+                .and()
                 .csrf((csrf) -> csrf
-                        .ignoringRequestMatchers(request -> "/token".equals(request.getContextPath())))
+//                        .ignoringRequestMatchers(request -> "/token".equals(request.getContextPath())))
+                        .ignoringAntMatchers("/token", "/swagger-ui**"))
                         /*
                          * Due to the fact that intellij of current version has problem detecting HttpSecurity as a component,
                          * We have to use @EnableWebSecurity annotation as a workaround, resulting in csrf to be enabled by default,

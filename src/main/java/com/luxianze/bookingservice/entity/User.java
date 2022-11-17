@@ -11,14 +11,14 @@ import javax.persistence.*;
 public class User {
     @Id
     @Column
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
      * User IC
      */
     @Column
-    private Long identity;
+    private String identity;
 
     @Column
     private String phoneNumber;
@@ -41,11 +41,11 @@ public class User {
         this.id = id;
     }
 
-    public Long getIdentity() {
+    public String getIdentity() {
         return identity;
     }
 
-    public void setIdentity(Long identity) {
+    public void setIdentity(String identity) {
         this.identity = identity;
     }
 

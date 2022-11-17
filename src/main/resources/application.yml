@@ -1,8 +1,12 @@
 server:
-  port: 5000
+  port: 8080
 
 spring:
   application:
     name: booking-service
   profiles:
     active: dev
+
+logging:
+  level:
+    org.springframework.data.jpa: debug

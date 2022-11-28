@@ -7,7 +7,6 @@ import com.luxianze.bookingservice.service.UserService;
 import com.luxianze.bookingservice.service.dto.LoginDTO;
 import com.luxianze.bookingservice.service.dto.PublicUserInfoDTO;
 import com.luxianze.bookingservice.service.dto.UserDTO;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -25,10 +24,10 @@ public class SecurityController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
-    public SecurityController(JwtEncoder encoder, UserService userService) {
+    public SecurityController(JwtEncoder encoder, UserService userService, PasswordEncoder passwordEncoder) {
         this.encoder = encoder;
         this.userService = userService;
-        this.passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/login")

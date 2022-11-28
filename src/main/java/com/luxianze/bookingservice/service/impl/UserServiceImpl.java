@@ -6,7 +6,6 @@ import com.luxianze.bookingservice.repository.UserRepository;
 import com.luxianze.bookingservice.service.UserService;
 import com.luxianze.bookingservice.service.dto.PublicUserInfoDTO;
 import com.luxianze.bookingservice.service.dto.UserDTO;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +19,9 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override

@@ -41,17 +41,19 @@ public class SecurityConfiguration {
         // @formatter:off
         http
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(request -> request.getServletPath().contains("/security")).permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers(request -> "/token".equals(request.getContextPath())))
-                        /*
-                         * Due to the fact that intellij of current version has problem detecting HttpSecurity as a component,
-                         * We have to use @EnableWebSecurity annotation as a workaround, resulting in csrf to be enabled by default,
-                         * thus we are turning it off manually here
-                         */
-                        .csrf()
-                        .disable()
+                        .ignoringRequestMatchers(request -> request.getServletPath().contains("/security"))
+                )
+                /*
+                 * Due to the fact that intellij of current version has problem detecting HttpSecurity as a component,
+                 * We have to use @EnableWebSecurity annotation as a workaround, resulting in csrf to be enabled by default,
+                 * thus we are turning it off manually here
+                 */
+                .csrf()
+                .disable()
                 .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

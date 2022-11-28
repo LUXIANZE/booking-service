@@ -1,4 +1,4 @@
-package com.luxianze.bookingservice.service;
+package com.luxianze.bookingservice.service.impl;
 
 import com.luxianze.bookingservice.entity.User;
 import com.luxianze.bookingservice.repository.UserRepository;

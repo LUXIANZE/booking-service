@@ -14,6 +14,6 @@ public interface UserService {
      * @param identity identity of user
      * @return user matching the provided identity
      */
-    UserDTO insecureFindByIdentity(String identity);
-    PublicUserInfoDTO findPublicInfoByIdentity(String identity);
+    UserDTO insecureFindByIdentity(String identity) throws Exception;
+    PublicUserInfoDTO findPublicInfoByIdentity(String identity) throws Exception;
 }

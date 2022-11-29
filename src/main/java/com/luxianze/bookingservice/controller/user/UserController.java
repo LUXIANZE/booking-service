@@ -3,9 +3,7 @@ package com.luxianze.bookingservice.controller.user;
 import com.luxianze.bookingservice.service.UserService;
 import com.luxianze.bookingservice.service.dto.PublicUserInfoDTO;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,9 +21,15 @@ public class UserController {
         return this.userService.findAll();
     }
 
+    @GetMapping("/{identity}")
+    public PublicUserInfoDTO getUserByIdentity(@PathVariable String identity) throws Exception {
+        return this.userService.findPublicInfoByIdentity(identity);
+    }
+
     @GetMapping("/secured")
     @PreAuthorize("hasAuthority('SCOPE_SUPERUSER')")
     public String securedStuff() {
         return "secured stuff";
     }
+
 }

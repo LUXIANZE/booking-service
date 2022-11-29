@@ -45,12 +45,12 @@ public class UserServiceImpl implements UserService {
 
     private void validateRegisteringDetails(UserDTO userDTO) throws Exception {
         boolean existsByIdentity = this.userRepository.existsByIdentity(userDTO.getIdentity());
-        if(existsByIdentity) {
+        if (existsByIdentity) {
             throw new Exception("Identity :" + userDTO.getIdentity() + ", is already registered.");
         }
 
         boolean existsByPhoneNumber = this.userRepository.existsByPhoneNumber(userDTO.getPhoneNumber());
-        if(existsByPhoneNumber) {
+        if (existsByPhoneNumber) {
             throw new Exception("Phone Number :" + userDTO.getPhoneNumber() + ", is already taken by another user.");
         }
     }
@@ -61,21 +61,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO insecureFindByIdentity(String identity) {
-        Optional<User> optionalUser = this.userRepository.findOneByIdentity(identity);
-        if (optionalUser.isEmpty()) {
-            return new UserDTO();
-        }
-        return mapUserToUserDTO(optionalUser.get());
+    public UserDTO insecureFindByIdentity(String identity) throws Exception {
+        User user = findUserByIdentity(identity);
+        return mapUserToUserDTO(user);
     }
 
     @Override
-    public PublicUserInfoDTO findPublicInfoByIdentity(String identity) {
+    public PublicUserInfoDTO findPublicInfoByIdentity(String identity) throws Exception {
+        User user = findUserByIdentity(identity);
+        return mapUserToPublicUserInfoDTO(user);
+    }
+
+    private User findUserByIdentity(String identity) throws Exception {
         Optional<User> optionalUser = this.userRepository.findOneByIdentity(identity);
         if (optionalUser.isEmpty()) {
-            return new PublicUserInfoDTO();
+            throw new Exception("User with identity: " + identity + ", not found");
         }
-        return mapUserToPublicUserInfoDTO(optionalUser.get());
+        return optionalUser.get();
     }
 
     private PublicUserInfoDTO mapUserToPublicUserInfoDTO(User user) {

@@ -1,7 +1,6 @@
 package com.luxianze.bookingservice.controller.security;
 
 import java.time.Instant;
-import java.util.Objects;
 
 import com.luxianze.bookingservice.service.UserService;
 import com.luxianze.bookingservice.service.dto.LoginDTO;
@@ -36,10 +35,6 @@ public class SecurityController {
         long expiry = 36000L;
 
         UserDTO userDTO = this.userService.insecureFindByIdentity(loginDTO.getIdentity());
-
-        if (Objects.isNull(userDTO)) {
-            throw new Exception("User with Identity: " + loginDTO.getIdentity() + ", not found");
-        }
 
         boolean isPinMatches = passwordEncoder.matches(loginDTO.getPin(), userDTO.getPin());
 

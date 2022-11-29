@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO findByIdentity(String identity) {
+    public UserDTO insecureFindByIdentity(String identity) {
         Optional<User> optionalUser = this.userRepository.findOneByIdentity(identity);
         if (optionalUser.isEmpty()) {
             return new UserDTO();

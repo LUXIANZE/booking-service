@@ -9,6 +9,11 @@ public interface UserService {
     PublicUserInfoDTO registerUser(UserDTO userDTO) throws Exception;
     List<PublicUserInfoDTO> findAll();
 
-    UserDTO findByIdentity(String identity);
+    /**
+     * Find by Identity while exposing pin(encrypted) field
+     * @param identity identity of user
+     * @return user matching the provided identity
+     */
+    UserDTO insecureFindByIdentity(String identity);
     PublicUserInfoDTO findPublicInfoByIdentity(String identity);
 }

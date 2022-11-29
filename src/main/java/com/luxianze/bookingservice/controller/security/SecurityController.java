@@ -35,7 +35,7 @@ public class SecurityController {
         Instant now = Instant.now();
         long expiry = 36000L;
 
-        UserDTO userDTO = this.userService.findByIdentity(loginDTO.getIdentity());
+        UserDTO userDTO = this.userService.insecureFindByIdentity(loginDTO.getIdentity());
 
         if (Objects.isNull(userDTO)) {
             throw new Exception("User with Identity: " + loginDTO.getIdentity() + ", not found");

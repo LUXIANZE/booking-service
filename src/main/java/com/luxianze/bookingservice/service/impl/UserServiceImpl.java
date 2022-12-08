@@ -4,13 +4,16 @@ import com.luxianze.bookingservice.constant.entity.Role;
 import com.luxianze.bookingservice.entity.User;
 import com.luxianze.bookingservice.repository.UserRepository;
 import com.luxianze.bookingservice.service.UserService;
-import com.luxianze.bookingservice.service.dto.PublicUserInfoDTO;
+import com.luxianze.bookingservice.service.dto.SecuredUserDTO;
 import com.luxianze.bookingservice.service.dto.UserDTO;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,17 +28,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public PublicUserInfoDTO registerUser(UserDTO userDTO) throws Exception {
+    public SecuredUserDTO registerUser(UserDTO userDTO) throws Exception {
         /*
         Disregard the id field while registering user
          */
 
         validateRegisteringDetails(userDTO);
+        validateEmail(userDTO);
 
         User user = new User();
         user.setIdentity(userDTO.getIdentity());
         user.setPin(passwordEncoder.encode(userDTO.getPin()));
         user.setPhoneNumber(userDTO.getPhoneNumber());
+        user.setEmail(userDTO.getEmail());
         user.setRole(Role.PUBLIC); // Assign default role as public
 
         User createdUser = this.userRepository.save(user);
@@ -43,6 +48,25 @@ public class UserServiceImpl implements UserService {
         return mapUserToPublicUserInfoDTO(createdUser);
     }
 
+    private void validateEmail(UserDTO userDTO) throws Exception {
+
+        if (Objects.nonNull(userDTO.getEmail())) {
+            Pattern VALID_EMAIL_ADDRESS_REGEX =
+                    Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+            Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(userDTO.getEmail());
+
+            if (!matcher.find()) {
+                throw new Exception("Invalid email pattern, please make sure email is following xxx@xxx.xxx pattern");
+            }
+        }
+    }
+
+    /**
+     * Check whether are the details already in use
+     *
+     * @param userDTO user
+     * @throws Exception thrown whenever identity or phone number is taken
+     */
     private void validateRegisteringDetails(UserDTO userDTO) throws Exception {
         boolean existsByIdentity = this.userRepository.existsByIdentity(userDTO.getIdentity());
         if (existsByIdentity) {
@@ -56,7 +80,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<PublicUserInfoDTO> findAll() {
+    public List<SecuredUserDTO> findAll() {
         return this.userRepository.findAll().stream().map(this::mapUserToPublicUserInfoDTO).collect(Collectors.toList());
     }
 
@@ -67,7 +91,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public PublicUserInfoDTO findPublicInfoByIdentity(String identity) throws Exception {
+    public SecuredUserDTO findPublicInfoByIdentity(String identity) throws Exception {
         User user = findUserByIdentity(identity);
         return mapUserToPublicUserInfoDTO(user);
     }
@@ -80,15 +104,16 @@ public class UserServiceImpl implements UserService {
         return optionalUser.get();
     }
 
-    private PublicUserInfoDTO mapUserToPublicUserInfoDTO(User user) {
+    private SecuredUserDTO mapUserToPublicUserInfoDTO(User user) {
 
-        PublicUserInfoDTO publicUserInfoDTO = new PublicUserInfoDTO();
-        publicUserInfoDTO.setId(user.getId());
-        publicUserInfoDTO.setRole(user.getRole());
-        publicUserInfoDTO.setIdentity(user.getIdentity());
-        publicUserInfoDTO.setPhoneNumber(user.getPhoneNumber());
+        SecuredUserDTO securedUserDTO = new SecuredUserDTO();
+        securedUserDTO.setId(user.getId());
+        securedUserDTO.setRole(user.getRole());
+        securedUserDTO.setIdentity(user.getIdentity());
+        securedUserDTO.setPhoneNumber(user.getPhoneNumber());
+        securedUserDTO.setEmail(user.getEmail());
 
-        return publicUserInfoDTO;
+        return securedUserDTO;
     }
 
 
@@ -99,6 +124,7 @@ public class UserServiceImpl implements UserService {
         userDTO.setRole(user.getRole());
         userDTO.setIdentity(user.getIdentity());
         userDTO.setPhoneNumber(user.getPhoneNumber());
+        userDTO.setEmail(user.getEmail());
         userDTO.setPin(user.getPin());
 
         return userDTO;

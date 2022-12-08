@@ -4,11 +4,10 @@ import com.luxianze.bookingservice.constant.entity.Role;
 import lombok.Data;
 
 @Data
-public class UserDTO {
+public class PublicUserDTO {
     private Long id;
     private String identity;
     private String phoneNumber;
     private String email;
-    private String pin;
     private Role role;
 }

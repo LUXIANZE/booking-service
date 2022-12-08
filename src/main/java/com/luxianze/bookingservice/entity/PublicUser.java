@@ -8,7 +8,8 @@ import javax.persistence.*;
 @Table(
         uniqueConstraints = @UniqueConstraint(columnNames = {"identity"})
 )
-public class User {
+public class PublicUser {
+
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,12 +26,6 @@ public class User {
 
     @Column
     private String email;
-
-    /**
-     * Chosen to use 6 digits pin for authentication
-     */
-    @Column
-    private String pin;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -66,14 +61,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPin() {
-        return pin;
-    }
-
-    public void setPin(String pin) {
-        this.pin = pin;
     }
 
     public Role getRole() {

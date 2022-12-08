@@ -52,8 +52,8 @@ public class SecurityConfiguration {
         // @formatter:off
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(request -> request.getServletPath().contains("/security")).permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers(request -> request.getServletPath().contains("/user")).authenticated()
+                        .anyRequest().permitAll()
                 )
                 /*
                  * Due to the fact that intellij of current version has problem detecting HttpSecurity as a component,

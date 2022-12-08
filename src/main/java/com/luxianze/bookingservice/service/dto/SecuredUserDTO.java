@@ -7,9 +7,10 @@ import lombok.Data;
  * This DTO excludes sensitive fields such as pin from the public
  */
 @Data
-public class PublicUserInfoDTO {
+public class SecuredUserDTO {
     private Long id;
     private String identity;
     private String phoneNumber;
+    private String email;
     private Role role;
 }

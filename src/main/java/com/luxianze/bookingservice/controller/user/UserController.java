@@ -1,7 +1,8 @@
 package com.luxianze.bookingservice.controller.user;
 
 import com.luxianze.bookingservice.service.UserService;
-import com.luxianze.bookingservice.service.dto.PublicUserInfoDTO;
+import com.luxianze.bookingservice.service.dto.SecuredUserDTO;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,13 +18,17 @@ public class UserController {
     }
 
     @GetMapping
-    public List<PublicUserInfoDTO> getUser() {
-        return this.userService.findAll();
+    public ResponseEntity<List<SecuredUserDTO>> getUser() {
+        return ResponseEntity.ok(this.userService.findAll());
     }
 
     @GetMapping("/{identity}")
-    public PublicUserInfoDTO getUserByIdentity(@PathVariable String identity) throws Exception {
-        return this.userService.findPublicInfoByIdentity(identity);
+    public ResponseEntity<SecuredUserDTO> getUserByIdentity(@PathVariable String identity) {
+        try {
+            return ResponseEntity.ok(this.userService.findPublicInfoByIdentity(identity));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/secured")

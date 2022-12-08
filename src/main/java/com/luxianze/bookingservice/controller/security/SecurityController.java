@@ -1,11 +1,13 @@
 package com.luxianze.bookingservice.controller.security;
 
+import java.net.URI;
 import java.time.Instant;
 
 import com.luxianze.bookingservice.service.UserService;
 import com.luxianze.bookingservice.service.dto.LoginDTO;
-import com.luxianze.bookingservice.service.dto.PublicUserInfoDTO;
+import com.luxianze.bookingservice.service.dto.SecuredUserDTO;
 import com.luxianze.bookingservice.service.dto.UserDTO;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -53,12 +55,23 @@ public class SecurityController {
     }
 
     @PostMapping("/register")
-    public PublicUserInfoDTO registerUser(@RequestBody UserDTO userDTO) throws Exception {
-        return this.userService.registerUser(userDTO);
+    public ResponseEntity<SecuredUserDTO> registerUser(@RequestBody UserDTO userDTO) {
+        try {
+            SecuredUserDTO securedUserDTO = this.userService.registerUser(userDTO);
+
+            return ResponseEntity
+                    .created(new URI("/user/" + securedUserDTO.getIdentity()))
+                    .body(securedUserDTO);
+        } catch (Exception e) {
+
+            return ResponseEntity
+                    .internalServerError()
+                    .build();
+        }
     }
 
     @GetMapping
-    public String test(){
+    public String test() {
         return "{ 'status':'valid' }";
     }
 }

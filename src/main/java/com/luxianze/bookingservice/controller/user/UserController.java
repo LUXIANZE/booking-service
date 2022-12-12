@@ -2,6 +2,7 @@ package com.luxianze.bookingservice.controller.user;
 
 import com.luxianze.bookingservice.service.UserService;
 import com.luxianze.bookingservice.service.dto.SecuredUserDTO;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
+@SecurityRequirement(name = "bearer-key")
 public class UserController {
     private final UserService userService;
 

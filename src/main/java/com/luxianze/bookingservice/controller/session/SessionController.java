@@ -2,6 +2,7 @@ package com.luxianze.bookingservice.controller.session;
 
 import com.luxianze.bookingservice.service.SessionService;
 import com.luxianze.bookingservice.service.dto.SessionDTO;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,7 @@ public class SessionController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @SecurityRequirement(name = "bearer-key")
     @PostMapping
     @PreAuthorize("hasAnyAuthority({'SCOPE_SUPERUSER','SCOPE_ADMIN', 'SCOPE_COACH', 'SCOPE_TEACHER'})")
     public ResponseEntity<SessionDTO> create(@RequestBody SessionDTO sessionDTO) {
@@ -38,6 +40,7 @@ public class SessionController {
                 .ok(sessionService.create(sessionDTO));
     }
 
+    @SecurityRequirement(name = "bearer-key")
     @PutMapping
     @PreAuthorize("hasAnyAuthority({'SCOPE_SUPERUSER','SCOPE_ADMIN', 'SCOPE_COACH', 'SCOPE_TEACHER'})")
     public ResponseEntity<SessionDTO> update(@RequestBody SessionDTO sessionDTO) {

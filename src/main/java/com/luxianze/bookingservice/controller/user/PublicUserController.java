@@ -20,7 +20,7 @@ public class PublicUserController {
     @GetMapping("/{id}")
     public ResponseEntity<PublicUserDTO> getPublicUserById(@PathVariable Long id) {
 
-        return publicUserService.getPublicUserById(id)
+        return publicUserService.getById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -29,20 +29,20 @@ public class PublicUserController {
     public ResponseEntity<PublicUserDTO> createPublicUser(@RequestBody PublicUserDTO publicUserDTO) {
 
         return ResponseEntity
-                .ok(publicUserService.savePublicUser(publicUserDTO));
+                .ok(publicUserService.create(publicUserDTO));
     }
 
     @PutMapping
     public ResponseEntity<PublicUserDTO> updatePublicUser(@RequestBody PublicUserDTO publicUserDTO) {
 
         return ResponseEntity
-                .ok(publicUserService.updatePublicUser(publicUserDTO));
+                .ok(publicUserService.update(publicUserDTO));
     }
 
     @GetMapping("/get-by-device-id/{deviceId}")
     public ResponseEntity<List<PublicUserDTO>> getPublicUserListByDeviceId(@PathVariable String deviceId) {
 
         return ResponseEntity
-                .ok(publicUserService.getPublicUserListByDeviceId(deviceId));
+                .ok(publicUserService.getByDeviceId(deviceId));
     }
 }

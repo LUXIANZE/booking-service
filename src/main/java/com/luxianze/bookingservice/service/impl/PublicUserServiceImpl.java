@@ -25,7 +25,7 @@ public class PublicUserServiceImpl implements PublicUserService {
     }
 
     @Override
-    public PublicUserDTO savePublicUser(PublicUserDTO publicUserDTO) {
+    public PublicUserDTO create(PublicUserDTO publicUserDTO) {
 
         /* all public user should be of role public */
         publicUserDTO.setRole(Role.PUBLIC);
@@ -37,7 +37,7 @@ public class PublicUserServiceImpl implements PublicUserService {
     }
 
     @Override
-    public PublicUserDTO updatePublicUser(PublicUserDTO publicUserDTO) {
+    public PublicUserDTO update(PublicUserDTO publicUserDTO) {
         PublicUser publicUser;
 
         if (Objects.isNull(publicUserDTO.getId())) {
@@ -45,11 +45,21 @@ public class PublicUserServiceImpl implements PublicUserService {
         } else {
             publicUser = publicUserRepository
                     .findById(publicUserDTO.getId())
+                    .map(foundPublicUser -> this.updatePublicUser(foundPublicUser, publicUserDTO))
                     .orElse(mapPublicUserDTO_ToPublicUser(publicUserDTO));
         }
 
         PublicUser savedPublicUser = publicUserRepository.save(publicUser);
         return mapPublicUserToPublicUserDTO(savedPublicUser);
+    }
+
+    private PublicUser updatePublicUser(PublicUser publicUser, PublicUserDTO publicUserDTO) {
+        publicUser.setEmail(publicUserDTO.getEmail());
+        publicUser.setRole(publicUserDTO.getRole());
+        publicUser.setIdentity(publicUserDTO.getIdentity());
+        publicUser.setPhoneNumber(publicUserDTO.getPhoneNumber());
+
+        return publicUser;
     }
 
     private PublicUserDTO mapPublicUserToPublicUserDTO(PublicUser savedPublicUser) {
@@ -75,14 +85,14 @@ public class PublicUserServiceImpl implements PublicUserService {
     }
 
     @Override
-    public Optional<PublicUserDTO> getPublicUserById(Long publicUserId) {
+    public Optional<PublicUserDTO> getById(Long publicUserId) {
         return publicUserRepository
                 .findById(publicUserId)
                 .map(this::mapPublicUserToPublicUserDTO);
     }
 
     @Override
-    public List<PublicUserDTO> getPublicUserListByDeviceId(String deviceId) {
+    public List<PublicUserDTO> getByDeviceId(String deviceId) {
         List<DevicePublicUserDTO> devicePublicUserDTOList = devicePublicUserService.getByDeviceId(deviceId);
         return devicePublicUserDTOList
                 .parallelStream()

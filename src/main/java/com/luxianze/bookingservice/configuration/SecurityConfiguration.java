@@ -31,6 +31,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -53,6 +54,13 @@ public class SecurityConfiguration {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(request -> request.getServletPath().contains("/user")).authenticated()
+                        // session cannot be created by public users
+                        .requestMatchers(request -> {
+                                    boolean sessionContextPath = request.getServletPath().contains("/session");
+                                    List<String> securedMethods = List.of(HttpMethod.POST.name(), HttpMethod.PUT.name(), HttpMethod.DELETE.name());
+                                    return securedMethods.contains(request.getMethod()) && sessionContextPath;
+                                }
+                        ).authenticated()
                         .anyRequest().permitAll()
                 )
                 /*
@@ -91,8 +99,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource()
-    {
+    CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
         configuration.addAllowedMethod(HttpMethod.PUT);
         configuration.addAllowedMethod(HttpMethod.PATCH);

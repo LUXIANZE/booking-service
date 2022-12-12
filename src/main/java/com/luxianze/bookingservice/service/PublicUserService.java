@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PublicUserService {
-    PublicUserDTO savePublicUser(PublicUserDTO publicUserDTO);
-    PublicUserDTO updatePublicUser(PublicUserDTO publicUserDTO);
-    Optional<PublicUserDTO> getPublicUserById(Long publicUserId);
-    List<PublicUserDTO> getPublicUserListByDeviceId(String deviceId);
+    PublicUserDTO create(PublicUserDTO publicUserDTO);
+    PublicUserDTO update(PublicUserDTO publicUserDTO);
+    Optional<PublicUserDTO> getById(Long publicUserId);
+    List<PublicUserDTO> getByDeviceId(String deviceId);
 }

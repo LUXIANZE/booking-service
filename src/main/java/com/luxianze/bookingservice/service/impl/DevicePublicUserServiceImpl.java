@@ -62,13 +62,6 @@ public class DevicePublicUserServiceImpl implements DevicePublicUserService {
     }
 
     @Override
-    public Optional<DevicePublicUserDTO> getByPublicUserId(Long publicUserId) {
-        return devicePublicUserRepository
-                .findByPublicUserId(publicUserId)
-                .map(this::mapDevicePublicUserToDevicePublicUserDTO);
-    }
-
-    @Override
     public Optional<DevicePublicUserDTO> get(DevicePublicUserDTO devicePublicUserDTO) {
         DevicePublicUserId devicePublicUserId = new DevicePublicUserId();
         devicePublicUserId.setDeviceId(devicePublicUserDTO.getDeviceId());

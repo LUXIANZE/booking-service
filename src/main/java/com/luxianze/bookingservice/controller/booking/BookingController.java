@@ -18,9 +18,9 @@ public class BookingController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<BookingDTO>> getBookings(Pageable pageable) {
+    public ResponseEntity<Page<BookingDTO>> getBookings(Pageable pageable, @RequestParam Long sessionId) {
         return ResponseEntity
-                .ok(bookingService.getAll(pageable));
+                .ok(bookingService.getAll(pageable, sessionId));
     }
 
     @GetMapping("/{bookingId}")

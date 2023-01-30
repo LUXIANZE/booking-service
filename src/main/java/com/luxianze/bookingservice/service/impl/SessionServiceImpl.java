@@ -4,13 +4,17 @@ import com.luxianze.bookingservice.entity.Session;
 import com.luxianze.bookingservice.repository.SessionRepository;
 import com.luxianze.bookingservice.service.SessionService;
 import com.luxianze.bookingservice.service.dto.SessionDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class SessionServiceImpl implements SessionService {
 
@@ -21,9 +25,18 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public Page<SessionDTO> getAll(Pageable pageable) {
+    public Page<SessionDTO> getAll(Pageable pageable, LocalDate date) {
+
+        LocalDateTime startOfDayLocalDateTime = date
+                .atStartOfDay();
+        LocalDateTime endOfDayLocalDateTime = date
+                .plusDays(1L)
+                .atStartOfDay();
+
+        log.info("Filtering Sessions between [{}] - [{}]", startOfDayLocalDateTime, endOfDayLocalDateTime);
+
         return sessionRepository
-                .findAll(pageable)
+                .findAllByDateTimeBetween(pageable, startOfDayLocalDateTime, endOfDayLocalDateTime)
                 .map(this::mapSessionToSessionDTO);
     }
 
@@ -64,7 +77,7 @@ public class SessionServiceImpl implements SessionService {
         SessionDTO sessionDTO = new SessionDTO();
         sessionDTO.setId(session.getId());
         sessionDTO.setSessionType(session.getSessionType());
-        sessionDTO.setSlots(session.getSlots());
+        sessionDTO.setTotalSlots(session.getTotalSlots());
         sessionDTO.setDateTime(session.getDateTime());
         return sessionDTO;
     }
@@ -73,7 +86,7 @@ public class SessionServiceImpl implements SessionService {
         Session session = new Session();
         session.setId(sessionDTO.getId());
         session.setSessionType(sessionDTO.getSessionType());
-        session.setSlots(sessionDTO.getSlots());
+        session.setTotalSlots(sessionDTO.getTotalSlots());
         session.setDateTime(sessionDTO.getDateTime());
         return session;
     }
@@ -81,7 +94,7 @@ public class SessionServiceImpl implements SessionService {
     private Session updateSession(Session session, SessionDTO sessionDTO) {
         session.setDateTime(sessionDTO.getDateTime());
         session.setSessionType(sessionDTO.getSessionType());
-        session.setSlots(sessionDTO.getSlots());
+        session.setTotalSlots(sessionDTO.getTotalSlots());
 
         return session;
     }

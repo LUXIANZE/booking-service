@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @RestController
 @RequestMapping("session")
 public class SessionController {
@@ -20,9 +22,9 @@ public class SessionController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<SessionDTO>> getAll(Pageable pageable) {
+    public ResponseEntity<Page<SessionDTO>> getAll(Pageable pageable, @RequestParam String dateString) {
         return ResponseEntity
-                .ok(sessionService.getAll(pageable));
+                .ok(sessionService.getAll(pageable, LocalDate.parse(dateString)));
     }
 
     @GetMapping("/{id}")

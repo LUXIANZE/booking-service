@@ -54,9 +54,9 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Page<BookingDTO> getAll(Pageable pageable) {
+    public Page<BookingDTO> getAll(Pageable pageable, Long sessionId) {
         return bookingRepository
-                .findAll(pageable)
+                .findAllBySessionId(pageable, sessionId)
                 .map(this::mapBookingToBookingDTO);
     }
 

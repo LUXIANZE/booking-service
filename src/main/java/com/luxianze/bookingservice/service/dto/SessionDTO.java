@@ -9,6 +9,6 @@ import java.time.LocalDateTime;
 public class SessionDTO {
     private Long id;
     private LocalDateTime dateTime;
-    private int slots;
+    private int totalSlots;
     private SessionType sessionType;
 }

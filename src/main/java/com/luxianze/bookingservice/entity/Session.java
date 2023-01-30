@@ -16,10 +16,10 @@ public class Session {
     private LocalDateTime dateTime;
 
     @Column
-    private int slots;
+    private int totalSlots;
 
     @Column
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private SessionType sessionType;
 
     public Long getId() {
@@ -38,12 +38,12 @@ public class Session {
         this.dateTime = dateTime;
     }
 
-    public int getSlots() {
-        return slots;
+    public int getTotalSlots() {
+        return totalSlots;
     }
 
-    public void setSlots(int slots) {
-        this.slots = slots;
+    public void setTotalSlots(int totalSlots) {
+        this.totalSlots = totalSlots;
     }
 
     public SessionType getSessionType() {

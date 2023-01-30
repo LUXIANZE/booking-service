@@ -6,7 +6,3 @@ spring:
     name: booking-service
   profiles:
     active: dev
-
-logging:
-  level:
-    org.springframework.data.jpa: debug

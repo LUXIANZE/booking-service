@@ -9,6 +9,6 @@ import java.util.Optional;
 public interface BookingService {
     BookingDTO create(BookingDTO bookingDTO);
     BookingDTO update(BookingDTO bookingDTO);
-    Page<BookingDTO> getAll(Pageable pageable);
+    Page<BookingDTO> getAll(Pageable pageable, Long sessionId);
     Optional<BookingDTO> getById(Long id);
 }

@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.concurrent.ExecutionException;
+
 @RestController
 @RequestMapping("booking")
 public class BookingController {
@@ -18,7 +20,7 @@ public class BookingController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<BookingDTO>> getBookings(Pageable pageable, @RequestParam Long sessionId) {
+    public ResponseEntity<Page<BookingDTO>> getBookings(Pageable pageable, @RequestParam Long sessionId) throws ExecutionException, InterruptedException {
         return ResponseEntity
                 .ok(bookingService.getAll(pageable, sessionId));
     }
@@ -31,7 +33,7 @@ public class BookingController {
     }
 
     @PostMapping
-    public ResponseEntity<BookingDTO> createBooking(@RequestBody BookingDTO bookingDTO) {
+    public ResponseEntity<BookingDTO> createBooking(@RequestBody BookingDTO bookingDTO) throws Exception {
         return ResponseEntity
                 .ok(bookingService.create(bookingDTO));
     }

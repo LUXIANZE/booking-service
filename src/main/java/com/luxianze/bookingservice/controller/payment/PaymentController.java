@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -23,13 +20,28 @@ public class PaymentController {
     @Value("${stripe.key.secret.test}")
     private String secretKey;
 
+    @Value("${booking.service.frontend.base.url}")
+    private String bookingServiceFrontendUrl;
+
+    @Value("${booking.service.frontend.pages.payment.success}")
+    private String bookingServiceFrontendPaymentSuccessPagePath;
+
+    @Value("${booking.service.frontend.pages.payment.cancel}")
+    private String bookingServiceFrontendPaymentCancelPagePath;
+
     public PaymentController() {
     }
 
-    @PostMapping("response-entity")
-    public ResponseEntity<?> PaymentResponseEntity() throws StripeException {
+    @PostMapping
+    public ResponseEntity<String> PaymentResponseEntity() throws StripeException {
         Stripe.apiKey = secretKey;
 
+        /*
+          TODO:
+          1. Collect customer details
+          2. Create check out session with useful info
+          3. Create Booking upon check out, and update status to paid upon payment success webhook
+         */
         SessionCreateParams params =
                 SessionCreateParams.builder()
                         .setMode(SessionCreateParams.Mode.PAYMENT)
@@ -72,18 +84,23 @@ public class PaymentController {
         Session session = Session.create(params);
 
         return ResponseEntity
-                .status(HttpStatus.PERMANENT_REDIRECT)
-                .header(HttpHeaders.LOCATION, session.getUrl())
-                .build();
+                .ok(session.getUrl());
     }
 
     @GetMapping("success")
     public ResponseEntity<String> PaymentSuccess() {
-        return ResponseEntity.ok("Payment Successfully Made!");
+        return ResponseEntity
+                .status(HttpStatus.PERMANENT_REDIRECT)
+                .header(HttpHeaders.LOCATION, bookingServiceFrontendUrl + bookingServiceFrontendPaymentSuccessPagePath)
+                .build();
     }
 
     @GetMapping("cancel")
     public ResponseEntity<String> PaymentCancel() {
-        return ResponseEntity.ok("Request to Cancel Payment!");
+        return ResponseEntity
+                .status(HttpStatus.PERMANENT_REDIRECT)
+                .header(HttpHeaders.LOCATION, bookingServiceFrontendUrl + bookingServiceFrontendPaymentCancelPagePath)
+                .build();
     }
+
 }

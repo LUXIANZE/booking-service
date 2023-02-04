@@ -33,6 +33,10 @@ public class BookingServiceImpl implements BookingService {
             throw new Exception("Session is fully booked");
         }
 
+        // Payment and attendance should default to false upon creation
+        bookingDTO.setPaymentDone(false);
+        bookingDTO.setAttendance(false);
+
         Booking booking = mapBookingDTO_ToBooking(bookingDTO);
         Booking savedBooking = bookingRepository.save(booking);
 

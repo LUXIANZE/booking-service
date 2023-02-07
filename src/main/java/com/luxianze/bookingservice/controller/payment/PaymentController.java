@@ -47,8 +47,6 @@ public class PaymentController {
 
     private final SessionRepository sessionRepository;
 
-    private static final long CENTS_MULTIPLIER = 100L;
-
     public PaymentController(BookingRepository bookingRepository, BadmintonTrainingSessionDetailsRepository badmintonTrainingSessionDetailsRepository, SessionRepository sessionRepository) {
         this.bookingRepository = bookingRepository;
         this.badmintonTrainingSessionDetailsRepository = badmintonTrainingSessionDetailsRepository;
@@ -82,7 +80,7 @@ public class PaymentController {
                         .orElseThrow(() -> new Exception("No Session details with SessionId : " + booking.getSessionId() + ". Unable to make payment."));
 
                 currency = badmintonTrainingSessionDetails.getCurrency();
-                amount = Math.round(badmintonTrainingSessionDetails.getPrice()) * CENTS_MULTIPLIER;
+                amount = badmintonTrainingSessionDetails.getPrice().longValue();
             }
             case HAIR_SALON -> log.info("Hair Salon booking");
             default -> log.warn("Unrecognised session type!");
@@ -90,7 +88,7 @@ public class PaymentController {
 
         log.info("Product: {}", session.getSessionType().name());
         log.info("Quantity: {}", quantity);
-        log.info("Amount: {} {}", amount * CENTS_MULTIPLIER, currency);
+        log.info("Amount: {} cents, {}", amount, currency);
 
         SessionCreateParams params =
                 SessionCreateParams.builder()

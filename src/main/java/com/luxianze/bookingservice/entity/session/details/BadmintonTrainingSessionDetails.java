@@ -1,6 +1,7 @@
 package com.luxianze.bookingservice.entity.session.details;
 
 import javax.persistence.*;
+import java.math.BigInteger;
 
 @Entity
 public class BadmintonTrainingSessionDetails {
@@ -16,7 +17,7 @@ public class BadmintonTrainingSessionDetails {
     private double durationInHours;
 
     @Column
-    private double price;
+    private BigInteger price;
 
     @Column
     private String currency;
@@ -48,11 +49,11 @@ public class BadmintonTrainingSessionDetails {
         this.durationInHours = durationInHours;
     }
 
-    public double getPrice() {
+    public BigInteger getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigInteger price) {
         this.price = price;
     }
 

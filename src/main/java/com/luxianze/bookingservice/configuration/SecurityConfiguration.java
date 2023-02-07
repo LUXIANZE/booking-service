@@ -53,7 +53,8 @@ public class SecurityConfiguration {
         // @formatter:off
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(request -> request.getServletPath().contains("/user")).authenticated()
+                        // TODO: deprecate usage of matcher and do security at controller level
+                        // .requestMatchers(request -> request.getServletPath().contains("/user")).authenticated()
                         // session cannot be created by public users
                         .requestMatchers(request -> {
                                     boolean sessionContextPath = request.getServletPath().contains("/session");

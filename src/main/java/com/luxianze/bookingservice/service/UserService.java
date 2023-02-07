@@ -6,9 +6,10 @@ import com.luxianze.bookingservice.service.dto.UserDTO;
 import java.util.List;
 
 public interface UserService {
-    // FIXME: dont throw exception, think about idempotency and use optional
     SecuredUserDTO registerUser(UserDTO userDTO) throws Exception;
+    SecuredUserDTO create(UserDTO userDTO) throws Exception;
     List<SecuredUserDTO> findAll();
+    SecuredUserDTO findPublicInfoByIdentity(String identity) throws Exception;
 
     /**
      * Find by Identity while exposing pin(encrypted) field
@@ -16,5 +17,4 @@ public interface UserService {
      * @return user matching the provided identity
      */
     UserDTO insecureFindByIdentity(String identity) throws Exception;
-    SecuredUserDTO findPublicInfoByIdentity(String identity) throws Exception;
 }

@@ -4,7 +4,6 @@ import com.luxianze.bookingservice.entity.DevicePublicUser;
 import com.luxianze.bookingservice.entity.composite.keys.DevicePublicUserId;
 import com.luxianze.bookingservice.repository.DevicePublicUserRepository;
 import com.luxianze.bookingservice.repository.DeviceRepository;
-import com.luxianze.bookingservice.repository.PublicUserRepository;
 import com.luxianze.bookingservice.service.DevicePublicUserService;
 import com.luxianze.bookingservice.service.dto.DevicePublicUserDTO;
 import org.springframework.stereotype.Service;
@@ -19,12 +18,10 @@ public class DevicePublicUserServiceImpl implements DevicePublicUserService {
 
     private final DevicePublicUserRepository devicePublicUserRepository;
     private final DeviceRepository deviceRepository;
-    private final PublicUserRepository publicUserRepository;
 
-    public DevicePublicUserServiceImpl(DevicePublicUserRepository devicePublicUserRepository, DeviceRepository deviceRepository, PublicUserRepository publicUserRepository) {
+    public DevicePublicUserServiceImpl(DevicePublicUserRepository devicePublicUserRepository, DeviceRepository deviceRepository) {
         this.devicePublicUserRepository = devicePublicUserRepository;
         this.deviceRepository = deviceRepository;
-        this.publicUserRepository = publicUserRepository;
     }
 
     @Override
@@ -43,13 +40,16 @@ public class DevicePublicUserServiceImpl implements DevicePublicUserService {
 
     private boolean validateDevicePublicUser(DevicePublicUserDTO devicePublicUserDTO) throws ExecutionException, InterruptedException {
 
-
+        /*
+        TODO: refactor for removal of public user entity
         CompletableFuture<Boolean> deviceExists = deviceRepository.deviceExists(devicePublicUserDTO.getDeviceId());
         CompletableFuture<Boolean> publicUserExists = publicUserRepository.publicUserExist(devicePublicUserDTO.getPublicUserId());
 
         CompletableFuture.allOf(deviceExists, publicUserExists);
 
         return deviceExists.get() && publicUserExists.get();
+        */
+        return false;
     }
 
     @Override

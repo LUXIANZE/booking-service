@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -29,23 +30,43 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public SecuredUserDTO registerUser(UserDTO userDTO) throws Exception {
-        /*
-        Disregard the id field while registering user
-         */
+
+        User user;
+
+        if (Objects.isNull(userDTO.getId())) {
+            UserDTO createdUser = rawCreate(userDTO);
+            user = mapUserDTO_ToUser(createdUser);
+        } else {
+            user = this.userRepository
+                    .findById(userDTO.getId())
+                    .orElseThrow(() -> new NoSuchElementException("No User with ID: " + userDTO.getId() + " found."));
+        }
+
+        user.setPin(passwordEncoder.encode(userDTO.getPin()));
+
+        User registeredUser = this.userRepository.save(user);
+
+        return mapUserToPublicUserInfoDTO(registeredUser);
+    }
+
+    @Override
+    public SecuredUserDTO create(UserDTO userDTO) throws Exception {
+        UserDTO createdUser = rawCreate(userDTO);
+        return mapUserDTOToPublicUserInfoDTO(createdUser);
+    }
+
+    public UserDTO rawCreate(UserDTO userDTO) throws Exception {
 
         validateRegisteringDetails(userDTO);
         validateEmail(userDTO);
 
         User user = new User();
         user.setIdentity(userDTO.getIdentity());
-        user.setPin(passwordEncoder.encode(userDTO.getPin()));
-        user.setPhoneNumber(userDTO.getPhoneNumber());
         user.setEmail(userDTO.getEmail());
-        user.setRole(Role.PUBLIC); // Assign default role as public
+        user.setPhoneNumber(userDTO.getPhoneNumber());
+        user.setRole(Role.PUBLIC); // user role must be defaulted to PUBLIC, shall be updated later by user with SUPERUSER/ADMIN role
 
-        User createdUser = this.userRepository.save(user);
-
-        return mapUserToPublicUserInfoDTO(createdUser);
+        return mapUserToUserDTO(this.userRepository.save(user));
     }
 
     private void validateEmail(UserDTO userDTO) throws Exception {
@@ -76,6 +97,11 @@ public class UserServiceImpl implements UserService {
         boolean existsByPhoneNumber = this.userRepository.existsByPhoneNumber(userDTO.getPhoneNumber());
         if (existsByPhoneNumber) {
             throw new Exception("Phone Number :" + userDTO.getPhoneNumber() + ", is already taken by another user.");
+        }
+
+        boolean existsByEmail = this.userRepository.existsByEmail(userDTO.getEmail());
+        if (existsByEmail) {
+            throw new Exception("Email :" + userDTO.getEmail() + ", is already taken by another user.");
         }
     }
 
@@ -116,6 +142,17 @@ public class UserServiceImpl implements UserService {
         return securedUserDTO;
     }
 
+    private SecuredUserDTO mapUserDTOToPublicUserInfoDTO(UserDTO userDTO) {
+
+        SecuredUserDTO securedUserDTO = new SecuredUserDTO();
+        securedUserDTO.setRole(userDTO.getRole());
+        securedUserDTO.setId(userDTO.getId());
+        securedUserDTO.setIdentity(userDTO.getIdentity());
+        securedUserDTO.setPhoneNumber(userDTO.getPhoneNumber());
+        securedUserDTO.setEmail(userDTO.getEmail());
+
+        return securedUserDTO;
+    }
 
     private UserDTO mapUserToUserDTO(User user) {
 
@@ -128,5 +165,18 @@ public class UserServiceImpl implements UserService {
         userDTO.setPin(user.getPin());
 
         return userDTO;
+    }
+
+    private User mapUserDTO_ToUser(UserDTO userDTO) {
+
+        User user = new User();
+        user.setRole(userDTO.getRole());
+        user.setId(userDTO.getId());
+        user.setIdentity(userDTO.getIdentity());
+        user.setPhoneNumber(userDTO.getPhoneNumber());
+        user.setEmail(userDTO.getEmail());
+        user.setPin(userDTO.getPin());
+
+        return user;
     }
 }

@@ -2,6 +2,7 @@ package com.luxianze.bookingservice.service.impl;
 
 import com.luxianze.bookingservice.constant.entity.Role;
 import com.luxianze.bookingservice.entity.User;
+import com.luxianze.bookingservice.repository.DeviceUserRepository;
 import com.luxianze.bookingservice.repository.UserRepository;
 import com.luxianze.bookingservice.service.UserService;
 import com.luxianze.bookingservice.service.dto.SecuredUserDTO;
@@ -22,10 +23,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final DeviceUserRepository deviceUserRepository;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, DeviceUserRepository deviceUserRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.deviceUserRepository = deviceUserRepository;
     }
 
     @Override
@@ -46,13 +49,13 @@ public class UserServiceImpl implements UserService {
 
         User registeredUser = this.userRepository.save(user);
 
-        return mapUserToPublicUserInfoDTO(registeredUser);
+        return mapUserToSecuredUserDTO(registeredUser);
     }
 
     @Override
     public SecuredUserDTO create(UserDTO userDTO) throws Exception {
         UserDTO createdUser = rawCreate(userDTO);
-        return mapUserDTOToPublicUserInfoDTO(createdUser);
+        return mapUserDTOToSecuredUserDTO(createdUser);
     }
 
     public UserDTO rawCreate(UserDTO userDTO) throws Exception {
@@ -107,7 +110,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<SecuredUserDTO> findAll() {
-        return this.userRepository.findAll().stream().map(this::mapUserToPublicUserInfoDTO).collect(Collectors.toList());
+        return this.userRepository.findAll().stream().map(this::mapUserToSecuredUserDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -119,7 +122,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public SecuredUserDTO findPublicInfoByIdentity(String identity) throws Exception {
         User user = findUserByIdentity(identity);
-        return mapUserToPublicUserInfoDTO(user);
+        return mapUserToSecuredUserDTO(user);
+    }
+
+    @Override
+    public List<SecuredUserDTO> findUsersByDeviceId(String deviceId) {
+        return deviceUserRepository
+                .findAllByDeviceId(deviceId)
+                .parallelStream()
+                .map(deviceUser -> userRepository.findById(deviceUser.getUserId()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(this::mapUserToSecuredUserDTO)
+                .collect(Collectors.toList());
     }
 
     private User findUserByIdentity(String identity) throws Exception {
@@ -130,7 +145,7 @@ public class UserServiceImpl implements UserService {
         return optionalUser.get();
     }
 
-    private SecuredUserDTO mapUserToPublicUserInfoDTO(User user) {
+    private SecuredUserDTO mapUserToSecuredUserDTO(User user) {
 
         SecuredUserDTO securedUserDTO = new SecuredUserDTO();
         securedUserDTO.setId(user.getId());
@@ -142,7 +157,7 @@ public class UserServiceImpl implements UserService {
         return securedUserDTO;
     }
 
-    private SecuredUserDTO mapUserDTOToPublicUserInfoDTO(UserDTO userDTO) {
+    private SecuredUserDTO mapUserDTOToSecuredUserDTO(UserDTO userDTO) {
 
         SecuredUserDTO securedUserDTO = new SecuredUserDTO();
         securedUserDTO.setRole(userDTO.getRole());

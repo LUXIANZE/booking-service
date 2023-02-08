@@ -10,6 +10,7 @@ public interface UserService {
     SecuredUserDTO create(UserDTO userDTO) throws Exception;
     List<SecuredUserDTO> findAll();
     SecuredUserDTO findPublicInfoByIdentity(String identity) throws Exception;
+    List<SecuredUserDTO> findUsersByDeviceId(String deviceId);
 
     /**
      * Find by Identity while exposing pin(encrypted) field

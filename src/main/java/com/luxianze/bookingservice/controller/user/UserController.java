@@ -5,6 +5,7 @@ import com.luxianze.bookingservice.service.dto.SecuredUserDTO;
 import com.luxianze.bookingservice.service.dto.UserDTO;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,20 +18,31 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
-    @SecurityRequirement(name = "bearer-key")
+
     @GetMapping
+    @SecurityRequirement(name = "bearer-key")
+    @PreAuthorize("hasAnyAuthority({'SCOPE_SUPERUSER','SCOPE_ADMIN', 'SCOPE_COACH', 'SCOPE_TEACHER'})")
     public ResponseEntity<List<SecuredUserDTO>> getUser() {
+        // TODO: Refactor to allow pagination
         return ResponseEntity.ok(this.userService.findAll());
     }
 
-    @SecurityRequirement(name = "bearer-key")
     @GetMapping("/{identity}")
+    @SecurityRequirement(name = "bearer-key")
+    @PreAuthorize("hasAnyAuthority({'SCOPE_SUPERUSER','SCOPE_ADMIN', 'SCOPE_COACH', 'SCOPE_TEACHER'})")
     public ResponseEntity<SecuredUserDTO> getUserByIdentity(@PathVariable String identity) {
         try {
+            // TODO: Refactor to use optional
             return ResponseEntity.ok(this.userService.findPublicInfoByIdentity(identity));
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/deviceId/{deviceId}")
+    public ResponseEntity<List<SecuredUserDTO>> getUserByDeviceId(@PathVariable String deviceId) {
+        return ResponseEntity
+                .ok(userService.findUsersByDeviceId(deviceId));
     }
 
     @PostMapping

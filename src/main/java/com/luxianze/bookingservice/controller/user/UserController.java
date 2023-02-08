@@ -5,7 +5,6 @@ import com.luxianze.bookingservice.service.dto.SecuredUserDTO;
 import com.luxianze.bookingservice.service.dto.UserDTO;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,13 +37,6 @@ public class UserController {
     public ResponseEntity<SecuredUserDTO> create(@RequestBody UserDTO userDTO) throws Exception {
         return ResponseEntity
                 .ok(userService.create(userDTO));
-    }
-
-    // TODO: remove this endpoint
-    @GetMapping("/secured")
-    @PreAuthorize("hasAuthority('SCOPE_SUPERUSER')")
-    public String securedStuff() {
-        return "secured stuff";
     }
 
 }

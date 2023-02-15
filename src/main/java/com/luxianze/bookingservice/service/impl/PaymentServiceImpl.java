@@ -54,6 +54,7 @@ public class PaymentServiceImpl implements PaymentService {
         String currency = "myr";
         long amount = 0L;
 
+        // TODO: move validation to a function, handle exception and delete booking, rethrow exception
         Booking booking = bookingRepository
                 .findById(bookingId)
                 .orElseThrow(() -> new Exception("No Booking with ID : " + bookingId + ". Unable to make payment."));

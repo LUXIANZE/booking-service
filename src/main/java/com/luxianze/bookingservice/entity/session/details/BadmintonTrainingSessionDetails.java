@@ -4,6 +4,9 @@ import javax.persistence.*;
 import java.math.BigInteger;
 
 @Entity
+@Table(
+        uniqueConstraints = @UniqueConstraint(columnNames = {"session_id"})
+)
 public class BadmintonTrainingSessionDetails {
     @Id
     @Column

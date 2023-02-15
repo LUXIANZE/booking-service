@@ -39,6 +39,7 @@ public class UserController {
         }
     }
 
+    // TODO: Update to use Page, and migrate to --> device/:deviceId/user
     @GetMapping("/deviceId/{deviceId}")
     public ResponseEntity<List<SecuredUserDTO>> getUserByDeviceId(@PathVariable String deviceId) {
         return ResponseEntity

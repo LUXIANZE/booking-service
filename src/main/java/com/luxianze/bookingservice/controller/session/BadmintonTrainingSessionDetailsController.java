@@ -32,6 +32,7 @@ public class BadmintonTrainingSessionDetailsController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // TODO: Move this to --> /session/:sessionId/sessionDetails
     @GetMapping("/sessionId/{id}")
     public ResponseEntity<BadmintonTrainingSessionDetailsDTO> getBySessionId(@PathVariable Long id) {
         return badmintonTrainingSessionDetailsService.findBySessionId(id)
